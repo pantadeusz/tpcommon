@@ -44,3 +44,7 @@ target_link_libraries(app_test tpcommon)
 enable_testing()
 add_test( app_test app_test )
 
+install(DIRECTORY src/ DESTINATION include/tpcommon
+        FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY / DESTINATION lib
+        FILES_MATCHING PATTERN "*.so")

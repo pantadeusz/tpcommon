@@ -1,10 +1,4 @@
-#include "machine.hpp"
-#include "coordsystem.hpp"
-#include "m_hwmoves.hpp"
 #include "img_img8.hpp"
-
-#include "tdd_helpers.hpp"
-
 #include <catch.hpp>
 #include <fakeit.hpp>
 
