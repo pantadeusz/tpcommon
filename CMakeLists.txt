@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
 
-project (raspigcd CXX)
+project (tpcommon CXX)
 
-set (raspigcd_VERSION_MAJOR 0)
-set (raspigcd_VERSION_MINOR 1)
+set (tpcommon_VERSION_MAJOR 0)
+set (tpcommon_VERSION_MINOR 1)
 
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -37,20 +37,10 @@ set(app_SOURCES "a_main.cpp" )
 file(GLOB_RECURSE lib_SOURCES "src/*.cpp")
 file(GLOB_RECURSE app_TESTS "tests/*.cpp")
 
-add_library(raspigcd SHARED ${lib_SOURCES})
-
-add_executable(app ${app_SOURCES} 
-               "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp" )
-
-target_link_libraries(app raspigcd)
+add_library(tpcommon SHARED ${lib_SOURCES})
 
 add_executable(app_test ${app_TESTS} "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp")
-target_link_libraries(app_test raspigcd)
-
-
-
-
-
+target_link_libraries(app_test tpcommon)
 enable_testing()
 add_test( app_test app_test )
 
