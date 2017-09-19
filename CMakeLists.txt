@@ -32,7 +32,7 @@ FIND_PACKAGE( OpenMP )
  include_directories(SYSTEM ${OpenMP_INCLUDE_PATH})
 
 
-include_directories("${PROJECT_BINARY_DIR}/src")
+include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/thirdparty/catch")
 include_directories("${PROJECT_SOURCE_DIR}/thirdparty/json")
 include_directories("${PROJECT_SOURCE_DIR}/thirdparty/fakeit")
