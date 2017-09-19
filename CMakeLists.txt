@@ -19,8 +19,10 @@ add_definitions(-Wall)
 
 install(DIRECTORY src/ DESTINATION include/tpcommon
         FILES_MATCHING PATTERN "*.hpp")
-install(DIRECTORY ./ DESTINATION lib
-        FILES_MATCHING PATTERN "*.so")
+# install(DIRECTORY ./ DESTINATION lib
+#         FILES_MATCHING PATTERN "*.so")
+
+install (TARGETS tpcommon DESTINATION lib)
 
 FIND_PACKAGE( OpenMP )
   if(OPENMP_FOUND)
