@@ -22,7 +22,6 @@ install(DIRECTORY src/ DESTINATION include/tpcommon
 # install(DIRECTORY ./ DESTINATION lib
 #         FILES_MATCHING PATTERN "*.so")
 
-install (TARGETS tpcommon DESTINATION lib)
 
 FIND_PACKAGE( OpenMP )
   if(OPENMP_FOUND)
@@ -45,6 +44,7 @@ file(GLOB_RECURSE lib_SOURCES "src/*.cpp")
 file(GLOB_RECURSE app_TESTS "tests/*.cpp")
 
 add_library(tpcommon SHARED ${lib_SOURCES})
+install (TARGETS tpcommon DESTINATION lib)
 
 add_executable(app_test ${app_TESTS} "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp")
 target_link_libraries(app_test tpcommon)
