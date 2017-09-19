@@ -17,6 +17,11 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 add_definitions(-std=c++11)
 add_definitions(-Wall)
 
+install(DIRECTORY src/ DESTINATION include/tpcommon
+        FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY / DESTINATION lib
+        FILES_MATCHING PATTERN "*.so")
+
 FIND_PACKAGE( OpenMP )
   if(OPENMP_FOUND)
      message("OPENMP FOUND")
@@ -44,7 +49,3 @@ target_link_libraries(app_test tpcommon)
 enable_testing()
 add_test( app_test app_test )
 
-install(DIRECTORY src/ DESTINATION include/tpcommon
-        FILES_MATCHING PATTERN "*.hpp")
-install(DIRECTORY / DESTINATION lib
-        FILES_MATCHING PATTERN "*.so")
