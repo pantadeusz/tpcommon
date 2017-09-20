@@ -86,10 +86,10 @@ std::ostream& operator << ( std::ostream& os, Position const& value ) {
 }
 
 
-
-Position getCrossPoint (const std::pair < Position, Position > edge1, const std::pair < Position, Position > edge2) {
-	throw "TODO";
-}
+//
+//Position getCrossPoint (const std::pair < Position, Position > edge1, const std::pair < Position, Position > edge2) {
+//	throw "TODO";
+//}
 
 
 }

@@ -28,7 +28,7 @@ SOFTWARE.
 #define  __POSITION__HPP___
 
 #include <vector>
-#include <tuple>
+//#include <tuple>
 #include <ostream>
 
 namespace tp {
@@ -54,9 +54,10 @@ Position crossProduct( const Position &u, const Position &v);
 bool operator == ( const Position &l, const Position &r );
 std::ostream& operator << ( std::ostream& os, Position const& value );
 
+//Position getCrossPoint (const std::pair < Position, Position > edge1, const std::pair < Position, Position > edge2);
 
 
-Position getCrossPoint (const std::pair < Position, Position > edge1, const std::pair < Position, Position > edge2);
+
 
 }
 }
