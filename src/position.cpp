@@ -69,6 +69,13 @@ double len2( const Position &s, bool x, bool y, bool z ) {
 	return ( x?s[0]*s[0]:0 )+( y?s[1]*s[1]:0 )+( z?s[2]*s[2]:0 );
 }
 
+Position crossProduct( const Position &u, const Position &v) {
+	throw "TODO";
+//	return Position(u2*v3;
+}
+
+
+
 bool operator == ( const Position &l, const Position &r ) {
 	return ( l[0]==r[0] ) && ( l[1]==r[1] ) && ( l[2]==r[2] );
 };
@@ -77,6 +84,13 @@ std::ostream& operator << ( std::ostream& os, Position const& value ) {
 	os << value[0] << ", " << value[1] << ", " << value[2] ;
 	return os;
 }
+
+
+
+Position getCrossPoint (const std::pair < Position, Position > edge1, const std::pair < Position, Position > edge2) {
+	throw "TODO";
+}
+
 
 }
 }
