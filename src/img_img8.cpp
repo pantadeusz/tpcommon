@@ -57,15 +57,13 @@ unsigned char Img8::operator()( int x, int y ) const {
 }
 
 void Img8::save( const std::string &fname ) {
-	unsigned error = lodepng::encode( fname, ( unsigned char * )data(), width, height, LodePNGColorType::LCT_GREY_ALPHA, 8 );
+	unsigned error = lodepng::encode( fname, ( unsigned char * )data(), width, height, LodePNGColorType::LCT_GREY, 8 );
 	if( error ) throw std::runtime_error( lodepng_error_text( error ) );
 }
 
 void Img8::load( const std::string &fname ) {
 	this->clear();
-	// LCT_GREY_ALPHA
-	// LCT_GREY
-	unsigned error = lodepng::decode( *( std::vector<unsigned char > * )this, width, height, fname, LodePNGColorType::LCT_GREY_ALPHA, 8 );
+	unsigned error = lodepng::decode( *( std::vector<unsigned char > * )this, width, height, fname, LodePNGColorType::LCT_GREY, 8 );
 
 	if( error ) throw std::runtime_error( lodepng_error_text( error ) );
 }
