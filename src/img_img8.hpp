@@ -47,10 +47,13 @@ public:
 	void save( const std::string &fname );
 
 	void load( const std::string &fname );
+
+	double similarTo(const Img8 &dst);
 };
 
 bool operator==( const Img8 &a, const Img8 &b );
 Img8 operator-( const Img8 &a, const Img8 &b );
+
 }
 }
 

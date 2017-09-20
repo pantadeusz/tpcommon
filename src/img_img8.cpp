@@ -69,6 +69,49 @@ void Img8::load( const std::string &fname ) {
 }
 
 
+double Img8::similarTo(const Img8 &dst) {
+	auto &a = *this;
+	auto &b = dst;
+
+	if ( a.width != b.width ) throw std::runtime_error( "Different image sizes!" );
+	if ( a.height != b.height ) throw std::runtime_error( "Different image sizes!" );
+	
+
+	double difference = 0;
+	#pragma omp parallel for
+	for ( int x = 0; x < ( int )a.width; x++ ) {
+		for ( int y = 0; y < ( int )a.height; y++ ) {
+			double dist = 0;
+			if (a( x,y ) != b( x,y )) {
+				dist = 1;
+				if (a( x,y ) == b( x+1,y )) {
+					dist = 0.5;
+				} else if (a( x,y ) == b( x-1,y )) {
+					dist = 0.5;
+				} else if (a( x,y ) == b( x,y+1 )) {
+					dist = 0.5;
+				} else if (a( x,y ) == b( x,y-1 )) {
+					dist = 0.5;
+				} else if (a( x,y ) == b( x-1,y-1)) {
+					dist = 0.75;
+				} else if (a( x,y ) == b( x-1,y+1)) {
+					dist = 0.75;
+				} else if (a( x,y ) == b( x+1,y+1)) {
+					dist = 0.75;
+				} else if (a( x,y ) == b( x+1,y-1)) {
+					dist = 0.75;
+				}
+			}
+			if (dist != 0) {
+				#pragma omp critical
+				difference += dist;
+			}
+			
+		}
+	}
+	return difference;
+}
+
 bool operator==( const Img8 &a, const Img8 &b ) {
 	if ( a.width != b.width ) return false;
 	if ( a.height != b.height ) return false;
