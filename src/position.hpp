@@ -50,6 +50,7 @@ Position operator/(const Position &a, const Position &b);
 double len2(const Position &s);
 double len2(const Position &s, bool x, bool y, bool z);
 Position crossProduct( const Position &u, const Position &v);
+//perpendicular distance
 double distance2D(const Position p, const Position a, const Position b);
 	
 bool operator == ( const Position &l, const Position &r );
