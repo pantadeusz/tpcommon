@@ -52,14 +52,14 @@ unsigned char &Img8::operator()( int x, int y ) {
 	if ( x<0 ) x = 0;
 	if ( x>= ( int )width ) x = width-1;
 	if ( y<0 ) y = 0;
-	if ( y>= ( int )width ) y = width-1;
+	if ( y>= ( int )height ) y = height-1;
 	return operator[]( y*width+x );
 }
 unsigned char Img8::operator()( int x, int y ) const {
 	if ( x<0 ) x = 0;
 	if ( x>= ( int )width ) x = width-1;
 	if ( y<0 ) y = 0;
-	if ( y>= ( int )width ) y = width-1;
+	if ( y>= ( int )height ) y = height-1;
 	return operator[]( y*width+x );
 }
 
