@@ -44,6 +44,8 @@ public:
 	unsigned char &operator()( int x, int y );
 	unsigned char operator()( int x, int y ) const;
 
+	void setTo(unsigned char v);
+
 	void save( const std::string &fname );
 
 	void load( const std::string &fname );

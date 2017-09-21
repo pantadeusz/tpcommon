@@ -26,6 +26,7 @@ SOFTWARE.
 
 #include "position.hpp"
 #include <vector>
+#include <cmath>
 
 namespace tp {
 namespace coord {
@@ -74,6 +75,12 @@ Position crossProduct( const Position &u, const Position &v) {
 //	return Position(u2*v3;
 }
 
+// point to check, and line segment a-b
+double distance2D(const Position p, const Position a, const Position b) {
+	double l = ::sqrt(len2(b-a,true, true, false));
+	if (l <= 0) return ::sqrt(len2(b-p,true, true, false));
+	return ::fabs((b[1]-a[1])*p[0] - (b[0]-a[0])*p[1]+b[0]*a[1]-b[1]*a[0])/l;
+}
 
 
 bool operator == ( const Position &l, const Position &r ) {
