@@ -27,6 +27,7 @@ SOFTWARE.
 #include "position.hpp"
 #include <vector>
 #include <cmath>
+#include <iostream>
 
 namespace tp {
 namespace coord {
@@ -63,6 +64,9 @@ Position operator*( const Position &a, const double &b ) {
 Position operator/( const Position &a, const Position &b ) {
 	return Position( a[0]/b[0],a[1]/b[1],a[2]/b[2] );
 }
+Position operator/( const Position &a, const double &b ) {
+	return Position( a[0]/b,a[1]/b,a[2]/b );
+}
 double len2( const Position &s ) {
 	return s[0]*s[0]+s[1]*s[1]+s[2]*s[2];
 }
@@ -70,17 +74,33 @@ double len2( const Position &s, bool x, bool y, bool z ) {
 	return ( x?s[0]*s[0]:0 )+( y?s[1]*s[1]:0 )+( z?s[2]*s[2]:0 );
 }
 
-Position crossProduct( const Position &u, const Position &v) {
-	throw "TODO";
-//	return Position(u2*v3;
-}
+// Position crossProduct( const Position &u, const Position &v) {
+// 	throw "TODO";
+// }
 
+double dotProduct( const Position &u, const Position &v) {
+	auto p = (u*v);
+	return p[0]+p[1]+p[2];
+}
+	
 // point to check, and line segment a-b
-double distance2D(const Position p, const Position a, const Position b) {
+double pointSegmentDistance2D(const Position p, const Position a, const Position b) {
 	double l = ::sqrt(len2(b-a,true, true, false));
 	if (l <= 0) return ::sqrt(len2(b-p,true, true, false));
 	return ::fabs((b[1]-a[1])*p[0] - (b[0]-a[0])*p[1]+b[0]*a[1]-b[1]*a[0])/l;
 }
+
+double pointSegmentDistance3D(const Position &A, const Position &B, const Position &C) {
+	double l = ::sqrt(len2(C-B));
+	if (l <= 0) return ::sqrt(len2(A-B));
+    Position d = (C - B) / l;
+    Position v = A - B;
+    double t = dotProduct(v,d);
+	Position P = B + (d * t);
+	
+    return ::sqrt(len2(P-A));
+}
+
 
 
 bool operator == ( const Position &l, const Position &r ) {
