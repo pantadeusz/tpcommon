@@ -41,62 +41,152 @@ Img8::Img8( const int w, const int h ) : std::vector < unsigned char >( w*h ) {
 	}
 }
 
-void Img8::setTo(unsigned char v) {
+void Img8::setTo( unsigned char v ) {
 	#pragma omp parallel for
-	for (unsigned y = 0; y < height*width; y++) {
-		this->operator[](y) = v;
+	for ( unsigned y = 0; y < height*width; y++ ) {
+		this->operator[]( y ) = v;
 	}
 }
 
-void Img8::drawCircleMax(const int x_, const int y_, const int r_, unsigned char color) {
+void Img8::drawCircleMax( const int x_, const int y_, const int r_, unsigned char color ) {
 	int r2 = r_*r_;
 	int rr;
-	int lx=x_-r_, ly=y_-r_, 
-		rx=x_+r_, ry=y_+r_;
+	int lx=x_-r_, ly=y_-r_,
+	    rx=x_+r_, ry=y_+r_;
 	int x0, y0;
-	if (lx < 0) lx = 0;
-	if (ly < 0) ly = 0;
-	if (rx < (int)width) rx = width;
-	if (ry < (int)height) ry = height;
-	
-
-	for (int y = ly; y <= ry; y++) {
-		for (int x = lx; y <= rx; x++) {
+	if ( lx < 0 ) lx = 0;
+	if ( ly < 0 ) ly = 0;
+	if ( rx >= ( int )width ) rx = width;
+	if ( ry >= ( int )height ) ry = height;
+	for ( int y = ly; y <= ry; y++ ) {
+		for ( int x = lx; x <= rx; x++ ) {
 			x0 = x-x_;
 			y0 = y-y_;
 			rr = x0*x0+y0*y0;
-			if (rr <= r2) {
-				auto &c = data()[y*width+x];
-				if (c < color) c = color;
+			if ( rr <= r2 ) {
+				auto &c = operator[]( y*width+x );
+				if ( c < color ) c = color;
 			}
 		}
 	}
 }
-void Img8::drawCircleMin(const int x_, const int y_, const int r_, unsigned char color) {
+void Img8::drawCircleMin( const int x_, const int y_, const int r_, unsigned char color ) {
 	int r2 = r_*r_;
 	int rr;
-	int lx=x_-r_, ly=y_-r_, 
-		rx=x_+r_, ry=y_+r_;
+	int lx=x_-r_, ly=y_-r_,
+	    rx=x_+r_, ry=y_+r_;
 	int x0, y0;
-	if (lx < 0) lx = 0;
-	if (ly < 0) ly = 0;
-	if (rx < (int)width) rx = width;
-	if (ry < (int)height) ry = height;
-	
+	if ( lx < 0 ) lx = 0;
+	if ( ly < 0 ) ly = 0;
+	if ( rx < ( int )width ) rx = width;
+	if ( ry < ( int )height ) ry = height;
 
-	for (int y = ly; y <= ry; y++) {
-		for (int x = lx; y <= rx; x++) {
+	for ( int y = ly; y <= ry; y++ ) {
+		for ( int x = lx; x <= rx; x++ ) {
 			x0 = x-x_;
 			y0 = y-y_;
 			rr = x0*x0+y0*y0;
-			if (rr <= r2) {
+			if ( rr <= r2 ) {
 				auto &c = data()[y*width+x];
-				if (c > color) c = color;
+				if ( c > color ) c = color;
 			}
 		}
 	}
 }
 
+void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, const int y_1,const int r_, unsigned char color ) {
+	drawCircleMax( x_0, y_0, r_, color );
+	drawCircleMax( x_1, y_1, r_, color );
+
+	int dx = x_1-x_0, dy=y_1-y_0;
+	double x0,y0,x1,y1;
+	auto swp = [&]() {
+		x0 = x_1;
+		x1 = x_0;
+		y0 = y_1;
+		y1 = y_0;
+	};
+	auto ccp = [&]() {
+		x0 = x_0;
+		x1 = x_1;
+		y0 = y_0;
+		y1 = y_1;
+	};
+
+	if ( dx*dx > dy*dy ) {
+		if ( x_0 > x_1 ) {
+			swp();
+		} else {
+			ccp();
+		}
+		double a = ( y1-y0 )/( x1-x0 );
+		double b = y0-a*x0;
+		for ( double x = x0+1; x < x1; x++ ) {
+			double y = a*x+b;
+			drawCircleMax( x, y, r_, color );
+		}
+	} else {
+		if ( y_0 > y_1 ) {
+			swp();
+		} else {
+			ccp();
+		}
+		double a = ( x1-x0 )/( y1-y0 );
+		double b = x0-a*y0;
+		for ( double y = y0+1; y < y1; y++ ) {
+			double x = a*y+b;
+			drawCircleMax( x, y, r_, color );
+		}
+
+	}
+}
+
+void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, const int y_1,const int r_, unsigned char color ) {
+	drawCircleMin( x_0, y_0, r_, color );
+	drawCircleMin( x_1, y_1, r_, color );
+
+	int dx = x_1-x_0, dy=y_1-y_0;
+	double x0,y0,x1,y1;
+	auto swp = [&]() {
+		x0 = x_1;
+		x1 = x_0;
+		y0 = y_1;
+		y1 = y_0;
+	};
+	auto ccp = [&]() {
+		x0 = x_0;
+		x1 = x_1;
+		y0 = y_0;
+		y1 = y_1;
+	};
+
+	if ( dx*dx > dy*dy ) {
+		if ( x_0 > x_1 ) {
+			swp();
+		} else {
+			ccp();
+		}
+		double a = ( y1-y0 )/( x1-x0 );
+		double b = y0-a*x0;
+		for ( double x = x0+1; x < x1; x++ ) {
+			double y = a*x+b;
+			drawCircleMin( x, y, r_, color );
+		}
+	} else {
+		if ( y_0 > y_1 ) {
+			swp();
+		} else {
+			ccp();
+		}
+		double a = ( x1-x0 )/( y1-y0 );
+		double b = x0-a*y0;
+		for ( double y = y0+1; y < y1; y++ ) {
+			double x = a*y+b;
+			drawCircleMin( x, y, r_, color );
+		}
+
+	}
+}
 
 
 unsigned char &Img8::operator()( int x, int y ) {
@@ -127,44 +217,44 @@ void Img8::load( const std::string &fname ) {
 }
 
 
-double Img8::similarTo(const Img8 &dst) {
+double Img8::similarTo( const Img8 &dst ) {
 	auto &a = *this;
 	auto &b = dst;
 
 	if ( a.width != b.width ) throw std::runtime_error( "Different image sizes!" );
 	if ( a.height != b.height ) throw std::runtime_error( "Different image sizes!" );
-	
+
 
 	double difference = 0;
 	#pragma omp parallel for
 	for ( int x = 0; x < ( int )a.width; x++ ) {
 		for ( int y = 0; y < ( int )a.height; y++ ) {
 			double dist = 0;
-			if (a( x,y ) != b( x,y )) {
+			if ( a( x,y ) != b( x,y ) ) {
 				dist = 1;
-				if (a( x,y ) == b( x+1,y )) {
+				if ( a( x,y ) == b( x+1,y ) ) {
 					dist = 0.5;
-				} else if (a( x,y ) == b( x-1,y )) {
+				} else if ( a( x,y ) == b( x-1,y ) ) {
 					dist = 0.5;
-				} else if (a( x,y ) == b( x,y+1 )) {
+				} else if ( a( x,y ) == b( x,y+1 ) ) {
 					dist = 0.5;
-				} else if (a( x,y ) == b( x,y-1 )) {
+				} else if ( a( x,y ) == b( x,y-1 ) ) {
 					dist = 0.5;
-				} else if (a( x,y ) == b( x-1,y-1)) {
+				} else if ( a( x,y ) == b( x-1,y-1 ) ) {
 					dist = 0.75;
-				} else if (a( x,y ) == b( x-1,y+1)) {
+				} else if ( a( x,y ) == b( x-1,y+1 ) ) {
 					dist = 0.75;
-				} else if (a( x,y ) == b( x+1,y+1)) {
+				} else if ( a( x,y ) == b( x+1,y+1 ) ) {
 					dist = 0.75;
-				} else if (a( x,y ) == b( x+1,y-1)) {
+				} else if ( a( x,y ) == b( x+1,y-1 ) ) {
 					dist = 0.75;
 				}
 			}
-			if (dist != 0) {
+			if ( dist != 0 ) {
 				#pragma omp critical
 				difference += dist;
 			}
-			
+
 		}
 	}
 	return difference;
