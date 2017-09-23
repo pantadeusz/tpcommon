@@ -48,6 +48,57 @@ void Img8::setTo(unsigned char v) {
 	}
 }
 
+void Img8::drawCircleMax(const int x_, const int y_, const int r_, unsigned char color) {
+	int r2 = r_*r_;
+	int rr;
+	int lx=x_-r_, ly=y_-r_, 
+		rx=x_+r_, ry=y_+r_;
+	int x0, y0;
+	if (lx < 0) lx = 0;
+	if (ly < 0) ly = 0;
+	if (rx < (int)width) rx = width;
+	if (ry < (int)height) ry = height;
+	
+
+	for (int y = ly; y <= ry; y++) {
+		for (int x = lx; y <= rx; x++) {
+			x0 = x-x_;
+			y0 = y-y_;
+			rr = x0*x0+y0*y0;
+			if (rr <= r2) {
+				auto &c = data()[y*width+x];
+				if (c < color) c = color;
+			}
+		}
+	}
+}
+void Img8::drawCircleMin(const int x_, const int y_, const int r_, unsigned char color) {
+	int r2 = r_*r_;
+	int rr;
+	int lx=x_-r_, ly=y_-r_, 
+		rx=x_+r_, ry=y_+r_;
+	int x0, y0;
+	if (lx < 0) lx = 0;
+	if (ly < 0) ly = 0;
+	if (rx < (int)width) rx = width;
+	if (ry < (int)height) ry = height;
+	
+
+	for (int y = ly; y <= ry; y++) {
+		for (int x = lx; y <= rx; x++) {
+			x0 = x-x_;
+			y0 = y-y_;
+			rr = x0*x0+y0*y0;
+			if (rr <= r2) {
+				auto &c = data()[y*width+x];
+				if (c > color) c = color;
+			}
+		}
+	}
+}
+
+
+
 unsigned char &Img8::operator()( int x, int y ) {
 	if ( x<0 ) x = 0;
 	if ( x>= ( int )width ) x = width-1;

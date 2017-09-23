@@ -44,6 +44,9 @@ public:
 	unsigned char &operator()( int x, int y );
 	unsigned char operator()( int x, int y ) const;
 
+	void drawCircleMax(const int x_, const int y_, const int r_, unsigned char color);
+	void drawCircleMin(const int x_, const int y_, const int r_, unsigned char color);
+
 	void setTo(unsigned char v);
 
 	void save( const std::string &fname );
