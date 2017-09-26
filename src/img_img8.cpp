@@ -260,6 +260,14 @@ double Img8::similarTo( const Img8 &dst ) {
 	return difference;
 }
 
+void Img8::dilate(double r) {
+	Img8 tmpMask0(r*2+2,r*2+1);
+	Img8 tmpMask1(r*2+2,r*2+1);
+	throw "todo";
+}
+
+
+
 bool operator==( const Img8 &a, const Img8 &b ) {
 	if ( a.width != b.width ) return false;
 	if ( a.height != b.height ) return false;
