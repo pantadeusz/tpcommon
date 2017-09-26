@@ -9,13 +9,14 @@ using namespace fakeit;
 using namespace tp::img;
 
 TEST_CASE( "Img8 tests", "[Img8]" ) {
-	Img8 img( 1024,1024 );
+	Img8 img( 256, 256);
 	SECTION( "constructor creates correct object" ) {
-		REQUIRE( img.width == 1024 );
-		REQUIRE( img.height == 1024 );
+		REQUIRE( img.width == 256 );
+		REQUIRE( img.height == 256 );
 	}
 
 	SECTION( "drawing line on image max" ) {
+		Img8 imgtest("tests/data/img8_testlines_max.png");
 		img.setTo(0);
 		img.drawCircleLineToMax(20, 20, 70, 80, 5, 64);
 		img.drawCircleLineToMax(40, 90, 70, 80, 5, 128);
@@ -26,9 +27,11 @@ TEST_CASE( "Img8 tests", "[Img8]" ) {
 		REQUIRE(img(20,20) == 64);
 		REQUIRE(img(40,90) == 128);
 		REQUIRE(img(30,20+(90-20)/2) == 64);
+		REQUIRE(img == imgtest);
 		
 	}
 	SECTION( "drawing line on image min" ) {
+		Img8 imgtest("tests/data/img8_testlines_min.png");
 		img.setTo(255);
 		img.drawCircleLineToMin(20, 20, 70, 80, 5, 64);
 		img.drawCircleLineToMin(40, 90, 70, 80, 5, 128);
@@ -39,7 +42,37 @@ TEST_CASE( "Img8 tests", "[Img8]" ) {
 		REQUIRE(img(20,20) == 64);
 		REQUIRE(img(40,90) == 64);
 		REQUIRE(img(30,20+(90-20)/2) == 64);
+		REQUIRE(img == imgtest);
+	}
+	SECTION( "dilate operation on drawed image" ) {
+		Img8 imgtest("tests/data/img8_testlines_dilate_1.png");
+		img.setTo(255);
+		img.drawCircleLineToMin(20, 20, 70, 80, 8, 64);
+		img.drawCircleLineToMin(40, 90, 70, 80, 8, 128);
+		img.drawCircleLineToMin(40, 90, 20, 20, 8, 64);
 		
+		img = img.dilate(3);
+		img.save("build/img8_testlines_dilate_1.png");
+		REQUIRE(img(0,0) == 255);
+		REQUIRE(img(20,20) == 64);
+		REQUIRE(img(40,90) == 64);
+		REQUIRE(img(30,20+(90-20)/2) == 64);
+		REQUIRE(img == imgtest);
+	}
+	SECTION( "erode operation on drawed image" ) {
+		Img8 imgtest("tests/data/img8_testlines_erode_1.png");
+		img.setTo(255);
+		img.drawCircleLineToMin(20, 20, 70, 80, 8, 64);
+		img.drawCircleLineToMin(40, 90, 70, 80, 8, 128);
+		img.drawCircleLineToMin(40, 90, 20, 20, 8, 64);
+		
+		img = img.erode(3);
+		img.save("build/img8_testlines_erode_1.png");
+		REQUIRE(img(0,0) == 255);
+		REQUIRE(img(20,20) == 64);
+		REQUIRE(img(40,90) == 64);
+		REQUIRE(img(30,20+(90-20)/2) == 64);
+		REQUIRE(img == imgtest);
 	}
 
 }

@@ -29,6 +29,8 @@ SOFTWARE.
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <map>
+#include <tuple>
 
 namespace tp {
 namespace img {
@@ -63,7 +65,7 @@ void Img8::drawCircleMax( const int x_, const int y_, const int r_, unsigned cha
 			x0 = x-x_;
 			y0 = y-y_;
 			rr = x0*x0+y0*y0;
-			if ( rr < r2 ) {
+			if ( rr <= r2 ) {
 				auto &c = operator[]( y*width+x );
 				if ( c < color ) c = color;
 			}
@@ -86,7 +88,7 @@ void Img8::drawCircleMin( const int x_, const int y_, const int r_, unsigned cha
 			x0 = x-x_;
 			y0 = y-y_;
 			rr = x0*x0+y0*y0;
-			if ( rr < r2 ) {
+			if ( rr <= r2 ) {
 				auto &c = data()[y*width+x];
 				if ( c > color ) c = color;
 			}
@@ -260,10 +262,61 @@ double Img8::similarTo( const Img8 &dst ) {
 	return difference;
 }
 
-void Img8::dilate(double r) {
-	Img8 tmpMask0(r*2+2,r*2+1);
-	Img8 tmpMask1(r*2+2,r*2+1);
-	throw "todo";
+Img8 Img8::dilate(double r_0) {
+	auto r2 = r_0*r_0;
+	std::vector < std::pair < int, int > > ballPositions;
+	for (double x = -r_0-1; x < r_0+1; x++) {
+		for (double y = -r_0-1; y < r_0+1; y++) {
+			auto d = x*x + y*y;
+			if (d < r2) {
+				ballPositions.push_back({x, y});
+			}
+		}
+	}
+
+	Img8 ret = *this;
+
+	#pragma omp parallel for
+	for (int y = 0; y < (int)height; y++) {
+		for (int x = 0; x < (int)width; x++) {
+			unsigned char c = 0;
+			for (auto &p : ballPositions) {
+				auto a = c;
+				auto b = (*this)(x+p.first,y+p.second); 
+				c = (a>b)?a:b;
+			}
+			ret(x,y) = c;
+		}
+	}
+	return ret;
+}
+Img8 Img8::erode(double r_0) {
+	auto r2 = r_0*r_0;
+	std::vector < std::pair < int, int > > ballPositions;
+	for (double x = -r_0-1; x < r_0+1; x++) {
+		for (double y = -r_0-1; y < r_0+1; y++) {
+			auto d = x*x + y*y;
+			if (d < r2) {
+				ballPositions.push_back({x, y});
+			}
+		}
+	}
+
+	Img8 ret = *this;
+
+	#pragma omp parallel for
+	for (int y = 0; y < (int)height; y++) {
+		for (int x = 0; x < (int)width; x++) {
+			unsigned char c = 255;
+			for (auto &p : ballPositions) {
+				auto a = c;
+				auto b = (*this)(x+p.first,y+p.second); 
+				c = (a<b)?a:b;
+			}
+			ret(x,y) = c;
+		}
+	}
+	return ret;
 }
 
 
@@ -273,7 +326,6 @@ bool operator==( const Img8 &a, const Img8 &b ) {
 	if ( a.height != b.height ) return false;
 	for ( unsigned i = 0; i < a.width*a.height; i++ ) {
 		if ( a[i] != b[i] ) {
-			//std::cout << "E: " << i << " : " << ( int )a[i] << " != " << ( int )b[i] << std::endl;
 			return false;
 		}
 	}
