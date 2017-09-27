@@ -44,13 +44,13 @@ public:
 	unsigned char &operator()( int x, int y );
 	unsigned char operator()( int x, int y ) const;
 
-	void drawCircleMax(const int x_, const int y_, const int r_, unsigned char color);
-	void drawCircleMin(const int x_, const int y_, const int r_, unsigned char color);
-	void drawCircleLineToMax(const int x_0, const int y_0, const int x_1, const int y_1,const int r_, unsigned char color);
-	void drawCircleLineToMin(const int x_0, const int y_0, const int x_1, const int y_1,const int r_, unsigned char color);
+	void drawCircleMax(const int x_, const int y_, const int d_, unsigned char color);
+	void drawCircleMin(const int x_, const int y_, const int d_, unsigned char color);
+	void drawCircleLineToMax(const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color);
+	void drawCircleLineToMin(const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color);
 	
-	Img8 dilate(double r);
-	Img8 erode(double r);
+	Img8 dilate(double d);
+	Img8 erode(double d);
 	
 	void setTo(unsigned char v);
 

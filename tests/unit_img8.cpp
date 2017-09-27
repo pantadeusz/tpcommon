@@ -18,9 +18,10 @@ TEST_CASE( "Img8 tests", "[Img8]" ) {
 	SECTION( "drawing line on image max" ) {
 		Img8 imgtest("tests/data/img8_testlines_max.png");
 		img.setTo(0);
-		img.drawCircleLineToMax(20, 20, 70, 80, 5, 64);
-		img.drawCircleLineToMax(40, 90, 70, 80, 5, 128);
-		img.drawCircleLineToMax(40, 90, 20, 20, 5, 64);
+		img.drawCircleLineToMax(20, 20, 70, 80, 10, 64);
+		img.drawCircleLineToMax(40, 90, 70, 80, 10, 128);
+		img.drawCircleLineToMax(40, 90, 20, 20, 10, 64);
+		img.drawCircleLineToMax(20, 120, 80, 120, 10, 128);
 		
 		img.save("build/img8_testlines_max.png");
 		REQUIRE(img(0,0) == 0);
@@ -33,10 +34,11 @@ TEST_CASE( "Img8 tests", "[Img8]" ) {
 	SECTION( "drawing line on image min" ) {
 		Img8 imgtest("tests/data/img8_testlines_min.png");
 		img.setTo(255);
-		img.drawCircleLineToMin(20, 20, 70, 80, 5, 64);
-		img.drawCircleLineToMin(40, 90, 70, 80, 5, 128);
-		img.drawCircleLineToMin(40, 90, 20, 20, 5, 64);
-		
+		img.drawCircleLineToMin(20, 20, 70, 80, 10, 64);
+		img.drawCircleLineToMin(40, 90, 70, 80, 10, 128);
+		img.drawCircleLineToMin(40, 90, 20, 20, 10, 64);
+		img.drawCircleLineToMin(20, 120, 80, 120, 10, 128);
+
 		img.save("build/img8_testlines_min.png");
 		REQUIRE(img(0,0) == 255);
 		REQUIRE(img(20,20) == 64);
@@ -47,11 +49,13 @@ TEST_CASE( "Img8 tests", "[Img8]" ) {
 	SECTION( "dilate operation on drawed image" ) {
 		Img8 imgtest("tests/data/img8_testlines_dilate_1.png");
 		img.setTo(255);
-		img.drawCircleLineToMin(20, 20, 70, 80, 8, 64);
-		img.drawCircleLineToMin(40, 90, 70, 80, 8, 128);
-		img.drawCircleLineToMin(40, 90, 20, 20, 8, 64);
+		img.drawCircleLineToMin(20, 20, 70, 80, 16, 64);
+		img.drawCircleLineToMin(40, 90, 70, 80, 16, 128);
+		img.drawCircleLineToMin(40, 90, 20, 20, 16, 64);
+
+		img.drawCircleLineToMin(20, 120, 80, 120, 16, 128);
 		
-		img = img.dilate(3);
+		img = img.dilate(6);
 		img.save("build/img8_testlines_dilate_1.png");
 		REQUIRE(img(0,0) == 255);
 		REQUIRE(img(20,20) == 64);
@@ -62,11 +66,12 @@ TEST_CASE( "Img8 tests", "[Img8]" ) {
 	SECTION( "erode operation on drawed image" ) {
 		Img8 imgtest("tests/data/img8_testlines_erode_1.png");
 		img.setTo(255);
-		img.drawCircleLineToMin(20, 20, 70, 80, 8, 64);
-		img.drawCircleLineToMin(40, 90, 70, 80, 8, 128);
-		img.drawCircleLineToMin(40, 90, 20, 20, 8, 64);
+		img.drawCircleLineToMin(20, 20, 70, 80, 16, 64);
+		img.drawCircleLineToMin(40, 90, 70, 80, 16, 128);
+		img.drawCircleLineToMin(40, 90, 20, 20, 16, 64);
+		img.drawCircleLineToMin(20, 120, 80, 120, 16, 128);
 		
-		img = img.erode(3);
+		img = img.erode(6);
 		img.save("build/img8_testlines_erode_1.png");
 		REQUIRE(img(0,0) == 255);
 		REQUIRE(img(20,20) == 64);

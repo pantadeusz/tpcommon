@@ -50,11 +50,11 @@ void Img8::setTo( unsigned char v ) {
 	}
 }
 
-void Img8::drawCircleMax( const int x_, const int y_, const int r_, unsigned char color ) {
-	int r2 = r_*r_;
+void Img8::drawCircleMax( const int x_, const int y_, const int d_, unsigned char color ) {
+	int r2 = ((double)d_/2.0)*((double)d_/2.0);
 	int rr;
-	int lx=x_-r_, ly=y_-r_,
-	    rx=x_+r_, ry=y_+r_;
+	int lx=x_-(d_>>1), ly=y_-(d_>>1),
+	    rx=x_+((d_>>1)+1), ry=y_+((d_>>1) + 1);
 	int x0, y0;
 	if ( lx < 0 ) lx = 0;
 	if ( ly < 0 ) ly = 0;
@@ -64,19 +64,20 @@ void Img8::drawCircleMax( const int x_, const int y_, const int r_, unsigned cha
 		for ( int x = lx; x <= rx; x++ ) {
 			x0 = x-x_;
 			y0 = y-y_;
-			rr = x0*x0+y0*y0;
-			if ( rr <= r2 ) {
+			rr = (0.5+x0)*(0.5+x0)+(0.5+y0)*(0.5+y0);
+			if ( rr < r2 ) {
 				auto &c = operator[]( y*width+x );
 				if ( c < color ) c = color;
 			}
 		}
 	}
 }
-void Img8::drawCircleMin( const int x_, const int y_, const int r_, unsigned char color ) {
-	int r2 = r_*r_;
+void Img8::drawCircleMin( const int x_, const int y_, const int d_, unsigned char color ) {
+	
+	int r2 = ((double)d_/2.0)*((double)d_/2.0);
 	int rr;
-	int lx=x_-r_, ly=y_-r_,
-	    rx=x_+r_, ry=y_+r_;
+	int lx=x_-(d_>>1), ly=y_-(d_>>1),
+	    rx=x_+((d_>>1)+1), ry=y_+((d_>>1) + 1);
 	int x0, y0;
 	if ( lx < 0 ) lx = 0;
 	if ( ly < 0 ) ly = 0;
@@ -87,8 +88,8 @@ void Img8::drawCircleMin( const int x_, const int y_, const int r_, unsigned cha
 		for ( int x = lx; x <= rx; x++ ) {
 			x0 = x-x_;
 			y0 = y-y_;
-			rr = x0*x0+y0*y0;
-			if ( rr <= r2 ) {
+			rr = (0.5+x0)*(0.5+x0)+(0.5+y0)*(0.5+y0);
+			if ( rr < r2 ) {
 				auto &c = data()[y*width+x];
 				if ( c > color ) c = color;
 			}
@@ -96,9 +97,9 @@ void Img8::drawCircleMin( const int x_, const int y_, const int r_, unsigned cha
 	}
 }
 
-void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, const int y_1,const int r_, unsigned char color ) {
-	drawCircleMax( x_0, y_0, r_, color );
-	drawCircleMax( x_1, y_1, r_, color );
+void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color ) {
+	drawCircleMax( x_0, y_0, d_, color );
+	drawCircleMax( x_1, y_1, d_, color );
 
 	int dx = x_1-x_0, dy=y_1-y_0;
 	double x0,y0,x1,y1;
@@ -125,7 +126,7 @@ void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, con
 		double b = y0-a*x0;
 		for ( double x = x0+1; x < x1; x++ ) {
 			double y = a*x+b;
-			drawCircleMax( x, y, r_, color );
+			drawCircleMax( x, y, d_, color );
 		}
 	} else {
 		if ( y_0 > y_1 ) {
@@ -137,15 +138,15 @@ void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, con
 		double b = x0-a*y0;
 		for ( double y = y0+1; y < y1; y++ ) {
 			double x = a*y+b;
-			drawCircleMax( x, y, r_, color );
+			drawCircleMax( x, y, d_, color );
 		}
 
 	}
 }
 
-void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, const int y_1,const int r_, unsigned char color ) {
-	drawCircleMin( x_0, y_0, r_, color );
-	drawCircleMin( x_1, y_1, r_, color );
+void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color ) {
+	drawCircleMin( x_0, y_0, d_, color );
+	drawCircleMin( x_1, y_1, d_, color );
 
 	int dx = x_1-x_0, dy=y_1-y_0;
 	double x0,y0,x1,y1;
@@ -172,7 +173,7 @@ void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, con
 		double b = y0-a*x0;
 		for ( double x = x0+1; x < x1; x++ ) {
 			double y = a*x+b;
-			drawCircleMin( x, y, r_, color );
+			drawCircleMin( x, y, d_, color );
 		}
 	} else {
 		if ( y_0 > y_1 ) {
@@ -184,7 +185,7 @@ void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, con
 		double b = x0-a*y0;
 		for ( double y = y0+1; y < y1; y++ ) {
 			double x = a*y+b;
-			drawCircleMin( x, y, r_, color );
+			drawCircleMin( x, y, d_, color );
 		}
 
 	}
@@ -262,13 +263,14 @@ double Img8::similarTo( const Img8 &dst ) {
 	return difference;
 }
 
-Img8 Img8::dilate(double r_0) {
+Img8 Img8::dilate(double d) {
+	auto r_0 = d/2.0;
 	auto r2 = r_0*r_0;
 	std::vector < std::pair < int, int > > ballPositions;
-	for (double x = -r_0-0.5; x < r_0+1; x++) {
-		for (double y = -r_0-0.5; y < r_0+1; y++) {
+	for (double x = -r_0-1; x < r_0+1; x++) {
+		for (double y = -r_0-1; y < r_0+1; y++) {
 			auto d = x*x + y*y;
-			if (d < r2) {
+			if (d <= r2) {
 				ballPositions.push_back({x, y});
 			}
 		}
@@ -290,13 +292,14 @@ Img8 Img8::dilate(double r_0) {
 	}
 	return ret;
 }
-Img8 Img8::erode(double r_0) {
+Img8 Img8::erode(double d) {
+	auto r_0 = d/2.0;
 	auto r2 = r_0*r_0;
 	std::vector < std::pair < int, int > > ballPositions;
 	for (double x = -r_0-1; x < r_0+1; x++) {
 		for (double y = -r_0-1; y < r_0+1; y++) {
 			auto d = x*x + y*y;
-			if (d < r2) {
+			if (d <= r2) {
 				ballPositions.push_back({x, y});
 			}
 		}
