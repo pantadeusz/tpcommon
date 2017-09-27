@@ -265,8 +265,8 @@ double Img8::similarTo( const Img8 &dst ) {
 Img8 Img8::dilate(double r_0) {
 	auto r2 = r_0*r_0;
 	std::vector < std::pair < int, int > > ballPositions;
-	for (double x = -r_0-1; x < r_0+1; x++) {
-		for (double y = -r_0-1; y < r_0+1; y++) {
+	for (double x = -r_0-0.5; x < r_0+1; x++) {
+		for (double y = -r_0-0.5; y < r_0+1; y++) {
 			auto d = x*x + y*y;
 			if (d < r2) {
 				ballPositions.push_back({x, y});
