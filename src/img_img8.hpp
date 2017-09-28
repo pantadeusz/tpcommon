@@ -51,7 +51,8 @@ public:
 	
 	Img8 dilate(double d);
 	Img8 erode(double d);
-	
+	Img8 removeNoise();
+		
 	void setTo(unsigned char v);
 
 	void save( const std::string &fname );

@@ -323,6 +323,47 @@ Img8 Img8::erode(double d) {
 }
 
 
+Img8 Img8::removeNoise() {
+	auto hasNeighbour = [&](Img8 &i, int x, int y){
+		if (i(x,y) == i(x+1,y  )) return true;
+		if (i(x,y) == i(x+1,y+1)) return true;
+		if (i(x,y) == i(x  ,y+1)) return true;
+		if (i(x,y) == i(x-1,y+1)) return true;
+		if (i(x,y) == i(x-1,y  )) return true;
+		if (i(x,y) == i(x-1,y-1)) return true;
+		if (i(x,y) == i(x  ,y-1)) return true;
+		if (i(x,y) == i(x+1,y-1)) return true;
+		return false;
+	};
+
+	Img8 ret = *this;
+
+	#pragma omp parallel for
+	for (int y = 0; y < (int)height; y++) {
+		for (int x = 0; x < (int)width; x++) {
+			if (hasNeighbour(*this,x,y)) ret(x,y) = (*this)(x,y);
+			else {
+				int i;
+				for (i = 0; i < 8; i++) {
+					int dx = (i % 3)-1;
+					int dy = ((i/3) % 3)-1;
+					if (hasNeighbour(*this,x+dx,y+dy)) {
+						ret(x,y) = (*this)(x+dx,y+dy);
+						i=128;
+						break;
+					} else {
+						if ((*this)(x+dx,y+dy) > ret(x, y)) {
+							ret(x,y) = ret(x+dx, y+dy);
+						}
+					}
+				}
+			}
+		}
+	}
+	return ret;
+}
+
+
 
 bool operator==( const Img8 &a, const Img8 &b ) {
 	if ( a.width != b.width ) return false;
