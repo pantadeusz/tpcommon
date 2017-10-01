@@ -43,7 +43,7 @@ set(app_SOURCES "a_main.cpp" )
 file(GLOB_RECURSE lib_SOURCES "src/*.cpp")
 file(GLOB_RECURSE app_TESTS "tests/*.cpp")
 
-add_library(tpcommon SHARED ${lib_SOURCES})
+add_library(tpcommon SHARED ${lib_SOURCES} "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp")
 install (TARGETS tpcommon DESTINATION lib)
 
 add_executable(app_test ${app_TESTS} "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp")
