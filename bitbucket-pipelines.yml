@@ -12,6 +12,5 @@ pipelines:
           # install deps
           - apt-get update && apt-get install -y cmake
           - ./configure
-          - make
+          - make app_test
           - ./app_test
-          - make test

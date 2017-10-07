@@ -17,12 +17,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2")
 add_definitions(-std=c++11)
 add_definitions(-Wall)
 
-install(DIRECTORY src/ DESTINATION include/tpcommon
-        FILES_MATCHING PATTERN "*.hpp")
-# install(DIRECTORY ./ DESTINATION lib
-#         FILES_MATCHING PATTERN "*.so")
-
-
 FIND_PACKAGE( OpenMP )
   if(OPENMP_FOUND)
      message("OPENMP FOUND")
@@ -44,10 +38,35 @@ file(GLOB_RECURSE lib_SOURCES "src/*.cpp")
 file(GLOB_RECURSE app_TESTS "tests/*.cpp")
 
 add_library(tpcommon SHARED ${lib_SOURCES} "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp")
-install (TARGETS tpcommon DESTINATION lib)
 
-add_executable(app_test ${app_TESTS} "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp")
+add_executable(app_test EXCLUDE_FROM_ALL ${app_TESTS} "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp")
 target_link_libraries(app_test tpcommon)
+
+
+install(TARGETS tpcommon DESTINATION lib)
+install(DIRECTORY src/ DESTINATION include/tpcommon
+        FILES_MATCHING PATTERN "*.hpp")
+
+
 enable_testing()
 add_test( app_test app_test )
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
+                  DEPENDS app_test)
+
+
+SET(CPACK_PACKAGE_VERSION_MAJOR ${mhttp_VERSION_MAJOR})
+SET(CPACK_PACKAGE_VERSION_MINOR ${mhttp_VERSION_MINOR})
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+SET(CPACK_GENERATOR "DEB" "TGZ")
+
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tadeusz Puźniakowski")
+INCLUDE(CPack)
+
+
+ 
+# To use this:
+# make package
+
+
 
