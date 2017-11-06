@@ -44,8 +44,7 @@ Img8::Img8( const int w, const int h ) : std::vector < unsigned char >( w*h ) {
 }
 
 void Img8::setTo( unsigned char v ) {
-	#pragma omp parallel for
-	for ( unsigned y = 0; y < height*width; y++ ) {
+	for ( unsigned y = 0; y < this->size(); y++ ) {
 		this->operator[]( y ) = v;
 	}
 }
