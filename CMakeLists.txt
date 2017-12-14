@@ -49,9 +49,13 @@ install(DIRECTORY src/ DESTINATION include/tpcommon
 
 
 enable_testing()
-add_test( app_test app_test )
-add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
-                  DEPENDS app_test)
+add_test( app_test app_test
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+         )
+add_custom_target(check COMMAND ${CMAKE_BINARY_DIR}/app_test
+                  DEPENDS app_test
+                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+                  )
 
 
 SET(CPACK_PACKAGE_VERSION_MAJOR ${mhttp_VERSION_MAJOR})

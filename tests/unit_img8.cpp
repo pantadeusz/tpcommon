@@ -79,6 +79,24 @@ TEST_CASE( "Img8 tests", "[Img8]" ) {
 		REQUIRE(img(30,20+(90-20)/2) == 64);
 		REQUIRE(img == imgtest);
 	}
+	SECTION( "fast dilate operation giving the same results as dilate" ) {
+		img.setTo(255);
+		img.drawCircleLineToMin(20, 20, 70, 80, 16, 64);
+		img.drawCircleLineToMin(40, 90, 70, 80, 16, 128);
+		img.drawCircleLineToMin(40, 90, 20, 20, 16, 64);
+
+		img.drawCircleLineToMin(20, 120, 80, 120, 16, 128);
+		
+		Img8 imgtest = img.dilate_old(6);
+		img = img.dilate(6);
+		
+		img.save("build/img8_testlines_dilate_1.png");
+		REQUIRE(img(0,0) == 255);
+		REQUIRE(img(20,20) == 64);
+		REQUIRE(img(40,90) == 64);
+		REQUIRE(img(30,20+(90-20)/2) == 64);
+		REQUIRE(img == imgtest);
+	}
 
 }
 

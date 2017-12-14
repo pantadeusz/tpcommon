@@ -44,22 +44,24 @@ public:
 	unsigned char &operator()( int x, int y );
 	unsigned char operator()( int x, int y ) const;
 
-	void drawCircleMax(const int x_, const int y_, const int d_, unsigned char color);
-	void drawCircleMin(const int x_, const int y_, const int d_, unsigned char color);
-	void drawCircleLineToMax(const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color);
-	void drawCircleLineToMin(const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color);
-	
-	Img8 dilate(double d);
-	Img8 erode(double d);
-	Img8 removeNoise();
-		
-	void setTo(unsigned char v);
+	void drawCircleMax( const int x_, const int y_, const int d_, unsigned char color );
+	void drawCircleMin( const int x_, const int y_, const int d_, unsigned char color );
+	void drawCircleLineToMax( const int x_0, const int y_0, const int x_1, const int y_1, const int d_, unsigned char color );
+	void drawCircleLineToMin( const int x_0, const int y_0, const int x_1, const int y_1, const int d_, unsigned char color );
+
+	Img8 dilate_old( double d ) const;
+	Img8 dilate( double d ) const;
+
+	Img8 erode( double d ) const;
+	Img8 removeNoise() const;
+
+	void setTo( unsigned char v );
 
 	void save( const std::string &fname );
 
 	void load( const std::string &fname );
 
-	double similarTo(const Img8 &dst);
+	double similarTo( const Img8 &dst );
 };
 
 bool operator==( const Img8 &a, const Img8 &b );

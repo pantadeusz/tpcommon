@@ -262,7 +262,7 @@ double Img8::similarTo( const Img8 &dst ) {
 	return difference;
 }
 
-Img8 Img8::dilate(double d) {
+Img8 Img8::dilate_old(double d) const {
 	auto r_0 = d/2.0;
 	auto r2 = r_0*r_0;
 	std::vector < std::pair < int, int > > ballPositions;
@@ -286,12 +286,63 @@ Img8 Img8::dilate(double d) {
 				auto b = (*this)(x+p.first,y+p.second); 
 				c = (a>b)?a:b;
 			}
-			ret(x,y) = c;
+			ret[y*ret.width+x] = c;
 		}
 	}
 	return ret;
 }
-Img8 Img8::erode(double d) {
+
+
+Img8 Img8::dilate(double d) const {
+	auto r_0 = d/2.0;
+	auto r2 = r_0*r_0;
+	std::vector < std::pair < int, int > > ballPositions;
+	ballPositions.reserve(r2*4);
+	for (double x = -r_0-1; x < r_0+1; x++) {
+		for (double y = -r_0-1; y < r_0+1; y++) {
+			auto d = x*x + y*y;
+			if (d <= r2) {
+				ballPositions.push_back({x, y});
+			}
+		}
+	}
+
+	Img8 marked(this->width, this->height);
+	Img8 ret = *this;
+
+
+	#pragma omp parallel for
+	for (int y = 0; y < (int)height-1; y++) {
+		for (int x = 0; x < (int)width-1; x++) {
+			unsigned char a = (*this)(x,y);
+			unsigned char b = (*this)(x+1,y);
+			unsigned char c = (*this)(x,y+1);
+			if (!((a == b ) && (a == c))) {
+				for (const auto &p : ballPositions) {
+					marked(x+p.first,y+p.second) = 0; 
+				}
+			}
+		}
+	}
+
+	for (int y = 0; y < (int)height; y++) {
+		for (int x = 0; x < (int)width; x++) {
+			if (marked(x,y) == 0) {
+				unsigned char c = 0;
+				for (const auto &p : ballPositions) {
+					auto a = c;
+					auto b = (*this)(x+p.first,y+p.second); 
+					c = (a>b)?a:b;
+				}
+				ret[y*ret.width+x] = c;
+			}
+		}
+	}
+	return ret;
+}
+
+
+Img8 Img8::erode(double d) const {
 	auto r_0 = d/2.0;
 	auto r2 = r_0*r_0;
 	std::vector < std::pair < int, int > > ballPositions;
@@ -315,15 +366,15 @@ Img8 Img8::erode(double d) {
 				auto b = (*this)(x+p.first,y+p.second); 
 				c = (a<b)?a:b;
 			}
-			ret(x,y) = c;
+			ret[y*ret.width+x] = c;
 		}
 	}
 	return ret;
 }
 
 
-Img8 Img8::removeNoise() {
-	auto hasNeighbour = [&](Img8 &i, int x, int y){
+Img8 Img8::removeNoise() const {
+	auto hasNeighbour = [&](const Img8 &i, int x, int y){
 		if (i(x,y) == i(x+1,y  )) return true;
 		if (i(x,y) == i(x+1,y+1)) return true;
 		if (i(x,y) == i(x  ,y+1)) return true;
