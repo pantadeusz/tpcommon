@@ -36,7 +36,7 @@ namespace img {
 class Img8 : public std::vector < unsigned char > {
 public:
 	unsigned width, height;
-	Img8( const int w, const int h );
+	Img8( const int w, const int h, unsigned char initColor = 255 );
 	Img8( const std::string & fn ) {
 		load( fn );
 	};

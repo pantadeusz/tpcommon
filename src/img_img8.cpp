@@ -35,11 +35,11 @@ SOFTWARE.
 namespace tp {
 namespace img {
 
-Img8::Img8( const int w, const int h ) : std::vector < unsigned char >( w*h ) {
+Img8::Img8( const int w, const int h, unsigned char initColor ) : std::vector < unsigned char >( w*h ) {
 	width = w;
 	height = h;
 	for ( int i = w*h; i--; ) {
-		operator[]( i ) = 255;
+		operator[]( i ) = initColor;
 	}
 }
 
