@@ -294,32 +294,37 @@ Img8 Img8::dilate_old(double d) const {
 
 
 Img8 Img8::dilate(double d) const {
+	//return dilate_old(d);
 	auto r_0 = d/2.0;
 	auto r2 = r_0*r_0;
 	std::vector < std::pair < int, int > > ballPositions;
 	ballPositions.reserve(r2*4);
-	for (double x = -r_0-1; x < r_0+1; x++) {
-		for (double y = -r_0-1; y < r_0+1; y++) {
+	for (double x = -r_0-1; x <= r_0+1; x++) {
+		for (double y = -r_0-1; y <= r_0+1; y++) {
 			auto d = x*x + y*y;
 			if (d <= r2) {
-				ballPositions.push_back({x, y});
+				ballPositions.push_back({x-1, y});
 			}
 		}
 	}
 
-	Img8 marked(this->width, this->height);
+	Img8 marked(this->width, this->height,0);
 	Img8 ret = *this;
 
+	std::vector < std::pair < int, int > > directionsToCheckEdge = {
+		{-1,0},
+		{0,-1},
+		{1,0},
+		{0,1}
+	};
 
 	#pragma omp parallel for
 	for (int y = 0; y < (int)height-1; y++) {
 		for (int x = 0; x < (int)width-1; x++) {
 			unsigned char a = (*this)(x,y);
-			unsigned char b = (*this)(x+1,y);
-			unsigned char c = (*this)(x,y+1);
-			if (!((a == b ) && (a == c))) {
-				for (const auto &p : ballPositions) {
-					marked(x+p.first,y+p.second) = 0; 
+			for (const auto & dir: directionsToCheckEdge) {
+				if (a > (*this)(x+dir.first,y+dir.second)) {
+					marked(x+1,y) = a;
 				}
 			}
 		}
@@ -327,14 +332,14 @@ Img8 Img8::dilate(double d) const {
 
 	for (int y = 0; y < (int)height; y++) {
 		for (int x = 0; x < (int)width; x++) {
-			if (marked(x,y) == 0) {
-				unsigned char c = 0;
+			// edge is marked, time to do the dilate operation on it
+			if (marked(x,y) > 0) {
+				auto a = marked(x,y);
 				for (const auto &p : ballPositions) {
-					auto a = c;
-					auto b = (*this)(x+p.first,y+p.second); 
-					c = (a>b)?a:b;
+					auto b = ret(x+p.first,y+p.second); 
+					auto c = (a>b)?a:b;
+					ret(x+p.first,y+p.second) = c;
 				}
-				ret[y*ret.width+x] = c;
 			}
 		}
 	}
