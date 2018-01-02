@@ -319,8 +319,8 @@ Img8 Img8::dilate(double d) const {
 	};
 
 	#pragma omp parallel for
-	for (int y = 0; y < (int)height-1; y++) {
-		for (int x = 0; x < (int)width-1; x++) {
+	for (int y = 0; y < (int)height; y++) {
+		for (int x = 0; x < (int)width; x++) {
 			unsigned char a = (*this)(x,y);
 			for (const auto & dir: directionsToCheckEdge) {
 				if (a > (*this)(x+dir.first,y+dir.second)) {
