@@ -52,7 +52,8 @@ void Img8::setTo( unsigned char v ) {
 	}
 }
 
-void Img8::drawCircleMax( const int x_, const int y_, const int d_, unsigned char color ) {
+void Img8::drawCircle( const int x_, const int y_, const int d_, unsigned char color, std::function < bool ( unsigned char, unsigned char ) > compare_ ) {
+
 	int r2 = ( ( double )d_ / 2.0 ) * ( ( double )d_ / 2.0 );
 	int rr;
 	int lx = x_ - ( d_ >> 1 ), ly = y_ - ( d_ >> 1 ),
@@ -60,49 +61,37 @@ void Img8::drawCircleMax( const int x_, const int y_, const int d_, unsigned cha
 	int x0, y0;
 	if ( lx < 0 ) lx = 0;
 	if ( ly < 0 ) ly = 0;
-	if ( rx >= ( int )width ) rx = width - 1;
-	if ( ry >= ( int )height ) ry = height - 1;
+	if ( rx >= ( int )width ) rx = width;
+	if ( ry >= ( int )height ) ry = height;
+
 	for ( int y = ly; y <= ry; y++ ) {
 		for ( int x = lx; x <= rx; x++ ) {
 			x0 = x - x_;
 			y0 = y - y_;
 			rr = ( 0.5 + x0 ) * ( 0.5 + x0 ) + ( 0.5 + y0 ) * ( 0.5 + y0 );
-			if ( ( rr < r2 ) && ( x >= 0 ) && ( y >= 0 ) && ( x < ( int )width ) && ( y < ( int )height ) ) {
-				auto &c = operator[]( y * width + x );
-				if ( c < color ) c = color;
+			if ( rr < r2 ) {
+				auto &c = data()[y * width + x];
+				if ( compare_( c, color ) ) c = color;
 			}
 		}
 	}
+}
+
+void Img8::drawCircleMax( const int x_, const int y_, const int d_, unsigned char color ) {
+	drawCircle( x_, y_, d_, color, []( unsigned char a, unsigned char b ) {
+		return a < b;
+	} );
 }
 void Img8::drawCircleMin( const int x_, const int y_, const int d_, unsigned char color ) {
-
-	int r2 = ( ( double )d_ / 2.0 ) * ( ( double )d_ / 2.0 );
-	int rr;
-	int lx = x_ - ( d_ >> 1 ), ly = y_ - ( d_ >> 1 ),
-		rx = x_ + ( ( d_ >> 1 ) + 1 ), ry = y_ + ( ( d_ >> 1 ) + 1 );
-	int x0, y0;
-	if ( lx < 0 ) lx = 0;
-	if ( ly < 0 ) ly = 0;
-	if ( rx < ( int )width ) rx = width;
-	if ( ry < ( int )height ) ry = height;
-
-	for ( int y = ly; y <= ry; y++ ) {
-		for ( int x = lx; x <= rx; x++ ) {
-			x0 = x - x_;
-			y0 = y - y_;
-			rr = ( 0.5 + x0 ) * ( 0.5 + x0 ) + ( 0.5 + y0 ) * ( 0.5 + y0 );
-			if ( ( rr < r2 ) && ( x >= 0 ) && ( y >= 0 ) && ( x < ( int )width ) && ( y < ( int )height ) ) {
-				auto &c = data()[y * width + x];
-				if ( c > color ) c = color;
-			}
-		}
-	}
+	drawCircle( x_, y_, d_, color, []( unsigned char a, unsigned char b ) {
+		return a > b;
+	} );
 }
 
 
-void Img8::drawCircleLine( const int x_0_, const int y_0_, const int x_1_, const int y_1_, const int d_, unsigned char color, std::function < unsigned char (unsigned char, unsigned char) > compare_ ) {
-	//drawCircleMin( x_0_, y_0_, d_, color );
-	//drawCircleMin( x_1_, y_1_, d_, color );
+void Img8::drawCircleLine( const int x_0_, const int y_0_, const int x_1_, const int y_1_, const int d_, unsigned char color, std::function < bool ( unsigned char, unsigned char ) > compare_ ) {
+	drawCircle( x_0_, y_0_, d_, color, compare_ );
+	drawCircle( x_1_, y_1_, d_, color, compare_ );
 
 
 	std::vector < std::array < int, 2 > > points;
@@ -152,8 +141,8 @@ void Img8::drawCircleLine( const int x_0_, const int y_0_, const int x_1_, const
 			for ( double x = x0 + 1; x < x1; x++ ) {
 				double y = a * x + b;
 				if ( ( x >= 0 ) && ( y >= 0 ) && ( x < ( int )width ) && ( y < ( int )height ) ) {
-					auto &c = data()[(int)y * width + (int)x];
-					if ( compare_(c, color) ) c = color;
+					auto &c = data()[( int )y * width + ( int )x];
+					if ( compare_( c, color ) ) c = color;
 				}
 			}
 		} else {
@@ -167,8 +156,8 @@ void Img8::drawCircleLine( const int x_0_, const int y_0_, const int x_1_, const
 			for ( double y = y0 + 1; y < y1; y++ ) {
 				double x = a * y + b;
 				if ( ( x >= 0 ) && ( y >= 0 ) && ( x < ( int )width ) && ( y < ( int )height ) ) {
-					auto &c = data()[(int)y * width + (int)x];
-					if ( compare_(c, color) ) c = color;
+					auto &c = data()[( int )y * width + ( int )x];
+					if ( compare_( c, color ) ) c = color;
 				}
 			}
 
@@ -178,13 +167,15 @@ void Img8::drawCircleLine( const int x_0_, const int y_0_, const int x_1_, const
 
 
 void Img8::drawCircleLineToMax( const int x_0_, const int y_0_, const int x_1_, const int y_1_, const int d_, unsigned char color ) {
-drawCircleLine( x_0_, y_0_,x_1_, y_1_, d_, color,
-[](unsigned char c, unsigned char color){return ( c < color );});
+	drawCircleLine( x_0_, y_0_, x_1_, y_1_, d_, color, []( unsigned char c, unsigned char color ) {
+		return ( c < color );
+	} );
 }
 
 void Img8::drawCircleLineToMin( const int x_0_, const int y_0_, const int x_1_, const int y_1_, const int d_, unsigned char color ) {
-drawCircleLine( x_0_, y_0_,x_1_, y_1_, d_, color,
-[](unsigned char c, unsigned char color){return ( c > color );});
+	drawCircleLine( x_0_, y_0_, x_1_, y_1_, d_, color,[]( unsigned char c, unsigned char color ) {
+		return ( c > color );
+	} );
 }
 
 

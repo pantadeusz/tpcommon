@@ -36,7 +36,8 @@ namespace img {
 
 class Img8 : public std::vector < unsigned char > {
 protected:
-void drawCircleLine( const int x_0, const int y_0, const int x_1, const int y_1, const int d_, unsigned char color, std::function < unsigned char (unsigned char, unsigned char) > compare_ );
+	void drawCircleLine( const int x_0, const int y_0, const int x_1, const int y_1, const int d_, unsigned char color, std::function < bool ( unsigned char, unsigned char ) > compare_ );
+	void drawCircle( const int x_, const int y_, const int d_, unsigned char color, std::function < bool ( unsigned char, unsigned char ) > compare_ );
 
 public:
 	unsigned width, height;
