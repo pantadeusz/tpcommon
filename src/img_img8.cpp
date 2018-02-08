@@ -32,14 +32,16 @@ SOFTWARE.
 #include <map>
 #include <tuple>
 #include <cmath>
+#include <vector>
+#include <array>
 
 namespace tp {
 namespace img {
 
-Img8::Img8( const int w, const int h, unsigned char initColor ) : std::vector < unsigned char >( w*h ) {
+Img8::Img8( const int w, const int h, unsigned char initColor ) : std::vector < unsigned char >( w * h ) {
 	width = w;
 	height = h;
-	for ( int i = w*h; i--; ) {
+	for ( int i = w * h; i--; ) {
 		operator[]( i ) = initColor;
 	}
 }
@@ -51,33 +53,33 @@ void Img8::setTo( unsigned char v ) {
 }
 
 void Img8::drawCircleMax( const int x_, const int y_, const int d_, unsigned char color ) {
-	int r2 = ((double)d_/2.0)*((double)d_/2.0);
+	int r2 = ( ( double )d_ / 2.0 ) * ( ( double )d_ / 2.0 );
 	int rr;
-	int lx=x_-(d_>>1), ly=y_-(d_>>1),
-	    rx=x_+((d_>>1)+1), ry=y_+((d_>>1) + 1);
+	int lx = x_ - ( d_ >> 1 ), ly = y_ - ( d_ >> 1 ),
+		rx = x_ + ( ( d_ >> 1 ) + 1 ), ry = y_ + ( ( d_ >> 1 ) + 1 );
 	int x0, y0;
 	if ( lx < 0 ) lx = 0;
 	if ( ly < 0 ) ly = 0;
-	if ( rx >= ( int )width ) rx = width-1;
-	if ( ry >= ( int )height ) ry = height-1;
+	if ( rx >= ( int )width ) rx = width - 1;
+	if ( ry >= ( int )height ) ry = height - 1;
 	for ( int y = ly; y <= ry; y++ ) {
 		for ( int x = lx; x <= rx; x++ ) {
-			x0 = x-x_;
-			y0 = y-y_;
-			rr = (0.5+x0)*(0.5+x0)+(0.5+y0)*(0.5+y0);
-			if (( rr < r2 ) && (x >= 0) && (y >= 0) && (x < (int)width) && (y < (int)height)) {
-				auto &c = operator[]( y*width+x );
+			x0 = x - x_;
+			y0 = y - y_;
+			rr = ( 0.5 + x0 ) * ( 0.5 + x0 ) + ( 0.5 + y0 ) * ( 0.5 + y0 );
+			if ( ( rr < r2 ) && ( x >= 0 ) && ( y >= 0 ) && ( x < ( int )width ) && ( y < ( int )height ) ) {
+				auto &c = operator[]( y * width + x );
 				if ( c < color ) c = color;
 			}
 		}
 	}
 }
 void Img8::drawCircleMin( const int x_, const int y_, const int d_, unsigned char color ) {
-	
-	int r2 = ((double)d_/2.0)*((double)d_/2.0);
+
+	int r2 = ( ( double )d_ / 2.0 ) * ( ( double )d_ / 2.0 );
 	int rr;
-	int lx=x_-(d_>>1), ly=y_-(d_>>1),
-	    rx=x_+((d_>>1)+1), ry=y_+((d_>>1) + 1);
+	int lx = x_ - ( d_ >> 1 ), ly = y_ - ( d_ >> 1 ),
+		rx = x_ + ( ( d_ >> 1 ) + 1 ), ry = y_ + ( ( d_ >> 1 ) + 1 );
 	int x0, y0;
 	if ( lx < 0 ) lx = 0;
 	if ( ly < 0 ) ly = 0;
@@ -86,143 +88,194 @@ void Img8::drawCircleMin( const int x_, const int y_, const int d_, unsigned cha
 
 	for ( int y = ly; y <= ry; y++ ) {
 		for ( int x = lx; x <= rx; x++ ) {
-			x0 = x-x_;
-			y0 = y-y_;
-			rr = (0.5+x0)*(0.5+x0)+(0.5+y0)*(0.5+y0);
-			if (( rr < r2 ) && (x >= 0) && (y >= 0) && (x < (int)width) && (y < (int)height)) {
-				auto &c = data()[y*width+x];
+			x0 = x - x_;
+			y0 = y - y_;
+			rr = ( 0.5 + x0 ) * ( 0.5 + x0 ) + ( 0.5 + y0 ) * ( 0.5 + y0 );
+			if ( ( rr < r2 ) && ( x >= 0 ) && ( y >= 0 ) && ( x < ( int )width ) && ( y < ( int )height ) ) {
+				auto &c = data()[y * width + x];
 				if ( c > color ) c = color;
 			}
 		}
 	}
 }
 
-void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color ) {
+void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, const int y_1, const int d_, unsigned char color ) {
 	drawCircleMax( x_0, y_0, d_, color );
 	drawCircleMax( x_1, y_1, d_, color );
-/*
-	int dx = x_1-x_0, dy=y_1-y_0;
-	double x0,y0,x1,y1;
-	auto swp = [&]() {
-		x0 = x_1;
-		x1 = x_0;
-		y0 = y_1;
-		y1 = y_0;
-	};
-	auto ccp = [&]() {
-		x0 = x_0;
-		x1 = x_1;
-		y0 = y_0;
-		y1 = y_1;
-	};
+	/*
+		int dx = x_1-x_0, dy=y_1-y_0;
+		double x0,y0,x1,y1;
+		auto swp = [&]() {
+			x0 = x_1;
+			x1 = x_0;
+			y0 = y_1;
+			y1 = y_0;
+		};
+		auto ccp = [&]() {
+			x0 = x_0;
+			x1 = x_1;
+			y0 = y_0;
+			y1 = y_1;
+		};
 
-	if ( dx*dx > dy*dy ) {
-		if ( x_0 > x_1 ) {
-			swp();
+		if ( dx*dx > dy*dy ) {
+			if ( x_0 > x_1 ) {
+				swp();
+			} else {
+				ccp();
+			}
+			double a = ( y1-y0 )/( x1-x0 );
+			double b = y0-a*x0;
+			for ( double x = x0+1; x < x1; x++ ) {
+				double y = a*x+b;
+				drawCircleMax( x, y, d_, color );
+			}
 		} else {
-			ccp();
-		}
-		double a = ( y1-y0 )/( x1-x0 );
-		double b = y0-a*x0;
-		for ( double x = x0+1; x < x1; x++ ) {
-			double y = a*x+b;
-			drawCircleMax( x, y, d_, color );
-		}
-	} else {
-		if ( y_0 > y_1 ) {
-			swp();
-		} else {
-			ccp();
-		}
-		double a = ( x1-x0 )/( y1-y0 );
-		double b = x0-a*y0;
-		for ( double y = y0+1; y < y1; y++ ) {
-			double x = a*y+b;
-			drawCircleMax( x, y, d_, color );
-		}
+			if ( y_0 > y_1 ) {
+				swp();
+			} else {
+				ccp();
+			}
+			double a = ( x1-x0 )/( y1-y0 );
+			double b = x0-a*y0;
+			for ( double y = y0+1; y < y1; y++ ) {
+				double x = a*y+b;
+				drawCircleMax( x, y, d_, color );
+			}
 
-	} */
-	double dx = x_1-x_0, dy = y_1-y_0;
-	double l = std::sqrt(dx*dx+dy*dy);
-	int n = l;
-	dx /= l;
-	dy /= l;
-	for (int i = 0; i < n; i++) {
-		drawCircleMax( (int)((double)x_0+dx*i), (int)((double)y_0+dy*i), d_, color );
+		} */
+
+
+
+	int r2 = ( ( double )d_ / 2.0 ) * ( ( double )d_ / 2.0 );
+	int rr;
+	int lx = -( d_ >> 1 ), ly = -( d_ >> 1 ),
+		rx = +( ( d_ >> 1 ) + 1 ), ry = +( ( d_ >> 1 ) + 1 );
+	int x0, y0;
+	std::vector < std::array < int, 2 > > points;
+	for ( int y = ly; y <= ry; y++ ) {
+		for ( int x = lx; x <= rx; x++ ) {
+			rr = ( 0.5 + x ) * ( 0.5 + x ) + ( 0.5 + y ) * ( 0.5 + y );
+			if ( rr < r2 ) {
+				points.push_back( {x, y} );
+			}
+		}
 	}
 
-}
 
-void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color ) {
-	drawCircleMin( x_0, y_0, d_, color );
-	drawCircleMin( x_1, y_1, d_, color );
-/*
-	int dx = x_1-x_0, dy=y_1-y_0;
-	double x0,y0,x1,y1;
-	auto swp = [&]() {
-		x0 = x_1;
-		x1 = x_0;
-		y0 = y_1;
-		y1 = y_0;
-	};
-	auto ccp = [&]() {
-		x0 = x_0;
-		x1 = x_1;
-		y0 = y_0;
-		y1 = y_1;
-	};
-
-	if ( dx*dx > dy*dy ) {
-		if ( x_0 > x_1 ) {
-			swp();
-		} else {
-			ccp();
-		}
-		double a = ( y1-y0 )/( x1-x0 );
-		double b = y0-a*x0;
-		for ( double x = x0+1; x < x1; x++ ) {
-			double y = a*x+b;
-			drawCircleMin( x, y, d_, color );
-		}
-	} else {
-		if ( y_0 > y_1 ) {
-			swp();
-		} else {
-			ccp();
-		}
-		double a = ( x1-x0 )/( y1-y0 );
-		double b = x0-a*y0;
-		for ( double y = y0+1; y < y1; y++ ) {
-			double x = a*y+b;
-			drawCircleMin( x, y, d_, color );
-		}
-
-	} */
-	double dx = x_1-x_0, dy = y_1-y_0;
-	double l = std::sqrt(dx*dx+dy*dy);
+	double dx = x_1 - x_0, dy = y_1 - y_0;
+	double l = std::sqrt( dx * dx + dy * dy );
 	int n = l;
 	dx /= l;
 	dy /= l;
-	for (int i = 0; i < n; i++) {
-		drawCircleMin( (int)((double)x_0+dx*i), (int)((double)y_0+dy*i), d_, color );
+	for ( auto &pt : points ) {
+		for ( int i = 0; i < n; i++ ) {
+			int x = pt[0] + ( int )( ( double )x_0 + dx * i );
+			int y = pt[1] + ( int )( ( double )y_0 + dy * i );
+			//drawCircleMin( (int)((double)x_0+dx*i), (int)((double)y_0+dy*i), d_, color );
+			if ( ( x >= 0 ) && ( y >= 0 ) && ( x < ( int )width ) && ( y < ( int )height ) ) {
+				auto &c = data()[y * width + x];
+				if ( c < color ) c = color;
+			}
+		}
+	}
+}
+
+void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, const int y_1, const int d_, unsigned char color ) {
+	drawCircleMin( x_0, y_0, d_, color );
+	drawCircleMin( x_1, y_1, d_, color );
+	/*
+		int dx = x_1-x_0, dy=y_1-y_0;
+		double x0,y0,x1,y1;
+		auto swp = [&]() {
+			x0 = x_1;
+			x1 = x_0;
+			y0 = y_1;
+			y1 = y_0;
+		};
+		auto ccp = [&]() {
+			x0 = x_0;
+			x1 = x_1;
+			y0 = y_0;
+			y1 = y_1;
+		};
+
+		if ( dx*dx > dy*dy ) {
+			if ( x_0 > x_1 ) {
+				swp();
+			} else {
+				ccp();
+			}
+			double a = ( y1-y0 )/( x1-x0 );
+			double b = y0-a*x0;
+			for ( double x = x0+1; x < x1; x++ ) {
+				double y = a*x+b;
+				drawCircleMin( x, y, d_, color );
+			}
+		} else {
+			if ( y_0 > y_1 ) {
+				swp();
+			} else {
+				ccp();
+			}
+			double a = ( x1-x0 )/( y1-y0 );
+			double b = x0-a*y0;
+			for ( double y = y0+1; y < y1; y++ ) {
+				double x = a*y+b;
+				drawCircleMin( x, y, d_, color );
+			}
+
+		} */
+
+	int r2 = ( ( double )d_ / 2.0 ) * ( ( double )d_ / 2.0 );
+	int rr;
+	int lx = -( d_ >> 1 ), ly = -( d_ >> 1 ),
+		rx = +( ( d_ >> 1 ) + 1 ), ry = +( ( d_ >> 1 ) + 1 );
+	int x0, y0;
+	std::vector < std::array < int, 2 > > points;
+	for ( int y = ly; y <= ry; y++ ) {
+		for ( int x = lx; x <= rx; x++ ) {
+			rr = ( 0.5 + x ) * ( 0.5 + x ) + ( 0.5 + y ) * ( 0.5 + y );
+			if ( rr < r2 ) {
+				points.push_back( {x, y} );
+			}
+		}
+	}
+
+
+	double dx = x_1 - x_0, dy = y_1 - y_0;
+	double l = std::sqrt( dx * dx + dy * dy );
+	int n = l;
+	dx /= l;
+	dy /= l;
+	for ( auto &pt : points ) {
+		for ( int i = 0; i < n; i++ ) {
+			int x = pt[0] + ( int )( ( double )x_0 + dx * i );
+			int y = pt[1] + ( int )( ( double )y_0 + dy * i );
+			//drawCircleMin( (int)((double)x_0+dx*i), (int)((double)y_0+dy*i), d_, color );
+			if ( ( x >= 0 ) && ( y >= 0 ) && ( x < ( int )width ) && ( y < ( int )height ) ) {
+				auto &c = data()[y * width + x];
+				if ( c > color ) c = color;
+			}
+		}
 	}
 
 }
 
 
 unsigned char &Img8::operator()( int x, int y ) {
-	if ( x<0 ) x = 0;
-	if ( x>= ( int )width ) x = width-1;
-	if ( y<0 ) y = 0;
-	if ( y>= ( int )height ) y = height-1;
-	return operator[]( y*width+x );
+	if ( x < 0 ) x = 0;
+	if ( x >= ( int )width ) x = width - 1;
+	if ( y < 0 ) y = 0;
+	if ( y >= ( int )height ) y = height - 1;
+	return operator[]( y * width + x );
 }
 unsigned char Img8::operator()( int x, int y ) const {
-	if ( x<0 ) x = 0;
-	if ( x>= ( int )width ) x = width-1;
-	if ( y<0 ) y = 0;
-	if ( y>= ( int )height ) y = height-1;
-	return operator[]( y*width+x );
+	if ( x < 0 ) x = 0;
+	if ( x >= ( int )width ) x = width - 1;
+	if ( y < 0 ) y = 0;
+	if ( y >= ( int )height ) y = height - 1;
+	return operator[]( y * width + x );
 }
 
 void Img8::save( const std::string &fname ) {
@@ -251,23 +304,23 @@ double Img8::similarTo( const Img8 &dst ) {
 	for ( int x = 0; x < ( int )a.width; x++ ) {
 		for ( int y = 0; y < ( int )a.height; y++ ) {
 			double dist = 0;
-			if ( a( x,y ) != b( x,y ) ) {
+			if ( a( x, y ) != b( x, y ) ) {
 				dist = 1;
-				if ( a( x,y ) == b( x+1,y ) ) {
+				if ( a( x, y ) == b( x + 1, y ) ) {
 					dist = 0.5;
-				} else if ( a( x,y ) == b( x-1,y ) ) {
+				} else if ( a( x, y ) == b( x - 1, y ) ) {
 					dist = 0.5;
-				} else if ( a( x,y ) == b( x,y+1 ) ) {
+				} else if ( a( x, y ) == b( x, y + 1 ) ) {
 					dist = 0.5;
-				} else if ( a( x,y ) == b( x,y-1 ) ) {
+				} else if ( a( x, y ) == b( x, y - 1 ) ) {
 					dist = 0.5;
-				} else if ( a( x,y ) == b( x-1,y-1 ) ) {
+				} else if ( a( x, y ) == b( x - 1, y - 1 ) ) {
 					dist = 0.75;
-				} else if ( a( x,y ) == b( x-1,y+1 ) ) {
+				} else if ( a( x, y ) == b( x - 1, y + 1 ) ) {
 					dist = 0.75;
-				} else if ( a( x,y ) == b( x+1,y+1 ) ) {
+				} else if ( a( x, y ) == b( x + 1, y + 1 ) ) {
 					dist = 0.75;
-				} else if ( a( x,y ) == b( x+1,y-1 ) ) {
+				} else if ( a( x, y ) == b( x + 1, y - 1 ) ) {
 					dist = 0.75;
 				}
 			}
@@ -281,15 +334,15 @@ double Img8::similarTo( const Img8 &dst ) {
 	return difference;
 }
 
-Img8 Img8::dilate_old(double d) const {
-	auto r_0 = d/2.0;
-	auto r2 = r_0*r_0;
+Img8 Img8::dilate_old( double d ) const {
+	auto r_0 = d / 2.0;
+	auto r2 = r_0 * r_0;
 	std::vector < std::pair < int, int > > ballPositions;
-	for (double x = -r_0-1; x < r_0+1; x++) {
-		for (double y = -r_0-1; y < r_0+1; y++) {
-			auto d = x*x + y*y;
-			if (d <= r2) {
-				ballPositions.push_back({x, y});
+	for ( double x = -r_0 - 1; x < r_0 + 1; x++ ) {
+		for ( double y = -r_0 - 1; y < r_0 + 1; y++ ) {
+			auto d = x * x + y * y;
+			if ( d <= r2 ) {
+				ballPositions.push_back( {x, y} );
 			}
 		}
 	}
@@ -297,67 +350,67 @@ Img8 Img8::dilate_old(double d) const {
 	Img8 ret = *this;
 
 	#pragma omp parallel for
-	for (int y = 0; y < (int)height; y++) {
-		for (int x = 0; x < (int)width; x++) {
+	for ( int y = 0; y < ( int )height; y++ ) {
+		for ( int x = 0; x < ( int )width; x++ ) {
 			unsigned char c = 0;
-			for (auto &p : ballPositions) {
+			for ( auto &p : ballPositions ) {
 				auto a = c;
-				auto b = (*this)(x+p.first,y+p.second); 
-				c = (a>b)?a:b;
+				auto b = ( *this )( x + p.first, y + p.second );
+				c = ( a > b ) ? a : b;
 			}
-			ret[y*ret.width+x] = c;
+			ret[y * ret.width + x] = c;
 		}
 	}
 	return ret;
 }
 
 
-Img8 Img8::dilate(double d) const {
+Img8 Img8::dilate( double d ) const {
 	//return dilate_old(d);
-	auto r_0 = d/2.0;
-	auto r2 = r_0*r_0;
+	auto r_0 = d / 2.0;
+	auto r2 = r_0 * r_0;
 	std::vector < std::pair < int, int > > ballPositions;
-	ballPositions.reserve(r2*4);
-	for (double x = -r_0-1; x <= r_0+1; x++) {
-		for (double y = -r_0-1; y <= r_0+1; y++) {
-			auto d = x*x + y*y;
-			if (d <= r2) {
-				ballPositions.push_back({x-1, y});
+	ballPositions.reserve( r2 * 4 );
+	for ( double x = -r_0 - 1; x <= r_0 + 1; x++ ) {
+		for ( double y = -r_0 - 1; y <= r_0 + 1; y++ ) {
+			auto d = x * x + y * y;
+			if ( d <= r2 ) {
+				ballPositions.push_back( {x - 1, y} );
 			}
 		}
 	}
 
-	Img8 marked(this->width, this->height,0);
+	Img8 marked( this->width, this->height, 0 );
 	Img8 ret = *this;
 
 	std::vector < std::pair < int, int > > directionsToCheckEdge = {
-		{-1,0},
-		{0,-1},
-		{1,0},
-		{0,1}
+		{-1, 0},
+		{0, -1},
+		{1, 0},
+		{0, 1}
 	};
 
 	#pragma omp parallel for
-	for (int y = 0; y < (int)height; y++) {
-		for (int x = 0; x < (int)width; x++) {
-			unsigned char a = (*this)(x,y);
-			for (const auto & dir: directionsToCheckEdge) {
-				if (a > (*this)(x+dir.first,y+dir.second)) {
-					marked(x+1,y) = a;
+	for ( int y = 0; y < ( int )height; y++ ) {
+		for ( int x = 0; x < ( int )width; x++ ) {
+			unsigned char a = ( *this )( x, y );
+			for ( const auto & dir : directionsToCheckEdge ) {
+				if ( a > ( *this )( x + dir.first, y + dir.second ) ) {
+					marked( x + 1, y ) = a;
 				}
 			}
 		}
 	}
 
-	for (int y = 0; y < (int)height; y++) {
-		for (int x = 0; x < (int)width; x++) {
+	for ( int y = 0; y < ( int )height; y++ ) {
+		for ( int x = 0; x < ( int )width; x++ ) {
 			// edge is marked, time to do the dilate operation on it
-			if (marked(x,y) > 0) {
-				auto a = marked(x,y);
-				for (const auto &p : ballPositions) {
-					auto b = ret(x+p.first,y+p.second); 
-					auto c = (a>b)?a:b;
-					ret(x+p.first,y+p.second) = c;
+			if ( marked( x, y ) > 0 ) {
+				auto a = marked( x, y );
+				for ( const auto &p : ballPositions ) {
+					auto b = ret( x + p.first, y + p.second );
+					auto c = ( a > b ) ? a : b;
+					ret( x + p.first, y + p.second ) = c;
 				}
 			}
 		}
@@ -366,15 +419,15 @@ Img8 Img8::dilate(double d) const {
 }
 
 
-Img8 Img8::erode(double d) const {
-	auto r_0 = d/2.0;
-	auto r2 = r_0*r_0;
+Img8 Img8::erode( double d ) const {
+	auto r_0 = d / 2.0;
+	auto r2 = r_0 * r_0;
 	std::vector < std::pair < int, int > > ballPositions;
-	for (double x = -r_0-1; x < r_0+1; x++) {
-		for (double y = -r_0-1; y < r_0+1; y++) {
-			auto d = x*x + y*y;
-			if (d <= r2) {
-				ballPositions.push_back({x, y});
+	for ( double x = -r_0 - 1; x < r_0 + 1; x++ ) {
+		for ( double y = -r_0 - 1; y < r_0 + 1; y++ ) {
+			auto d = x * x + y * y;
+			if ( d <= r2 ) {
+				ballPositions.push_back( {x, y} );
 			}
 		}
 	}
@@ -382,15 +435,15 @@ Img8 Img8::erode(double d) const {
 	Img8 ret = *this;
 
 	#pragma omp parallel for
-	for (int y = 0; y < (int)height; y++) {
-		for (int x = 0; x < (int)width; x++) {
+	for ( int y = 0; y < ( int )height; y++ ) {
+		for ( int x = 0; x < ( int )width; x++ ) {
 			unsigned char c = 255;
-			for (auto &p : ballPositions) {
+			for ( auto &p : ballPositions ) {
 				auto a = c;
-				auto b = (*this)(x+p.first,y+p.second); 
-				c = (a<b)?a:b;
+				auto b = ( *this )( x + p.first, y + p.second );
+				c = ( a < b ) ? a : b;
 			}
-			ret[y*ret.width+x] = c;
+			ret[y * ret.width + x] = c;
 		}
 	}
 	return ret;
@@ -398,36 +451,36 @@ Img8 Img8::erode(double d) const {
 
 
 Img8 Img8::removeNoise() const {
-	auto hasNeighbour = [&](const Img8 &i, int x, int y){
-		if (i(x,y) == i(x+1,y  )) return true;
-		if (i(x,y) == i(x+1,y+1)) return true;
-		if (i(x,y) == i(x  ,y+1)) return true;
-		if (i(x,y) == i(x-1,y+1)) return true;
-		if (i(x,y) == i(x-1,y  )) return true;
-		if (i(x,y) == i(x-1,y-1)) return true;
-		if (i(x,y) == i(x  ,y-1)) return true;
-		if (i(x,y) == i(x+1,y-1)) return true;
+	auto hasNeighbour = [&]( const Img8 & i, int x, int y ) {
+		if ( i( x, y ) == i( x + 1, y  ) ) return true;
+		if ( i( x, y ) == i( x + 1, y + 1 ) ) return true;
+		if ( i( x, y ) == i( x, y + 1 ) ) return true;
+		if ( i( x, y ) == i( x - 1, y + 1 ) ) return true;
+		if ( i( x, y ) == i( x - 1, y  ) ) return true;
+		if ( i( x, y ) == i( x - 1, y - 1 ) ) return true;
+		if ( i( x, y ) == i( x, y - 1 ) ) return true;
+		if ( i( x, y ) == i( x + 1, y - 1 ) ) return true;
 		return false;
 	};
 
 	Img8 ret = *this;
 
 	#pragma omp parallel for
-	for (int y = 0; y < (int)height; y++) {
-		for (int x = 0; x < (int)width; x++) {
-			if (hasNeighbour(*this,x,y)) ret(x,y) = (*this)(x,y);
+	for ( int y = 0; y < ( int )height; y++ ) {
+		for ( int x = 0; x < ( int )width; x++ ) {
+			if ( hasNeighbour( *this, x, y ) ) ret( x, y ) = ( *this )( x, y );
 			else {
 				int i;
-				for (i = 0; i < 8; i++) {
-					int dx = (i % 3)-1;
-					int dy = ((i/3) % 3)-1;
-					if (hasNeighbour(*this,x+dx,y+dy)) {
-						ret(x,y) = (*this)(x+dx,y+dy);
-						i=128;
+				for ( i = 0; i < 8; i++ ) {
+					int dx = ( i % 3 ) - 1;
+					int dy = ( ( i / 3 ) % 3 ) - 1;
+					if ( hasNeighbour( *this, x + dx, y + dy ) ) {
+						ret( x, y ) = ( *this )( x + dx, y + dy );
+						i = 128;
 						break;
 					} else {
-						if ((*this)(x+dx,y+dy) > ret(x, y)) {
-							ret(x,y) = ret(x+dx, y+dy);
+						if ( ( *this )( x + dx, y + dy ) > ret( x, y ) ) {
+							ret( x, y ) = ret( x + dx, y + dy );
 						}
 					}
 				}
@@ -442,7 +495,7 @@ Img8 Img8::removeNoise() const {
 bool operator==( const Img8 &a, const Img8 &b ) {
 	if ( a.width != b.width ) return false;
 	if ( a.height != b.height ) return false;
-	for ( unsigned i = 0; i < a.width*a.height; i++ ) {
+	for ( unsigned i = 0; i < a.width * a.height; i++ ) {
 		if ( a[i] != b[i] ) {
 			return false;
 		}
@@ -454,7 +507,7 @@ Img8 operator-( const Img8 &a, const Img8 &b )  {
 	Img8 ret = a;
 	for ( int x = 0; x < ( int )a.width; x++ ) {
 		for ( int y = 0; y < ( int )a.height; y++ ) {
-			ret( x,y ) = a( x,y ) - b( x,y );
+			ret( x, y ) = a( x, y ) - b( x, y );
 		}
 	}
 	return ret;
