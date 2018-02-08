@@ -64,7 +64,7 @@ void Img8::drawCircleMax( const int x_, const int y_, const int d_, unsigned cha
 			x0 = x-x_;
 			y0 = y-y_;
 			rr = (0.5+x0)*(0.5+x0)+(0.5+y0)*(0.5+y0);
-			if ( rr < r2 ) {
+			if (( rr < r2 ) && (x >= 0) && (y >= 0) && (x < (int)width) && (y < (int)height)) {
 				auto &c = operator[]( y*width+x );
 				if ( c < color ) c = color;
 			}
@@ -88,7 +88,7 @@ void Img8::drawCircleMin( const int x_, const int y_, const int d_, unsigned cha
 			x0 = x-x_;
 			y0 = y-y_;
 			rr = (0.5+x0)*(0.5+x0)+(0.5+y0)*(0.5+y0);
-			if ( rr < r2 ) {
+			if (( rr < r2 ) && (x >= 0) && (y >= 0) && (x < (int)width) && (y < (int)height)) {
 				auto &c = data()[y*width+x];
 				if ( c > color ) c = color;
 			}
