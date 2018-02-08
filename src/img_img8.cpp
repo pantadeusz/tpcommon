@@ -31,6 +31,7 @@ SOFTWARE.
 #include <iostream>
 #include <map>
 #include <tuple>
+#include <cmath>
 
 namespace tp {
 namespace img {
@@ -99,7 +100,7 @@ void Img8::drawCircleMin( const int x_, const int y_, const int d_, unsigned cha
 void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color ) {
 	drawCircleMax( x_0, y_0, d_, color );
 	drawCircleMax( x_1, y_1, d_, color );
-
+/*
 	int dx = x_1-x_0, dy=y_1-y_0;
 	double x0,y0,x1,y1;
 	auto swp = [&]() {
@@ -140,13 +141,22 @@ void Img8::drawCircleLineToMax( const int x_0, const int y_0, const int x_1, con
 			drawCircleMax( x, y, d_, color );
 		}
 
+	} */
+	double dx = x_1-x_0, dy = y_1-y_0;
+	double l = std::sqrt(dx*dx+dy*dy);
+	int n = l;
+	dx /= l;
+	dy /= l;
+	for (int i = 0; i < n; i++) {
+		drawCircleMax( (int)((double)x_0+dx*i), (int)((double)y_0+dy*i), d_, color );
 	}
+
 }
 
 void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, const int y_1,const int d_, unsigned char color ) {
 	drawCircleMin( x_0, y_0, d_, color );
 	drawCircleMin( x_1, y_1, d_, color );
-
+/*
 	int dx = x_1-x_0, dy=y_1-y_0;
 	double x0,y0,x1,y1;
 	auto swp = [&]() {
@@ -187,7 +197,16 @@ void Img8::drawCircleLineToMin( const int x_0, const int y_0, const int x_1, con
 			drawCircleMin( x, y, d_, color );
 		}
 
+	} */
+	double dx = x_1-x_0, dy = y_1-y_0;
+	double l = std::sqrt(dx*dx+dy*dy);
+	int n = l;
+	dx /= l;
+	dy /= l;
+	for (int i = 0; i < n; i++) {
+		drawCircleMin( (int)((double)x_0+dx*i), (int)((double)y_0+dy*i), d_, color );
 	}
+
 }
 
 
