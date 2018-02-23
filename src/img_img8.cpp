@@ -61,8 +61,8 @@ void Img8::drawCircle( const int x_, const int y_, const int d_, unsigned char c
 	int x0, y0;
 	if ( lx < 0 ) lx = 0;
 	if ( ly < 0 ) ly = 0;
-	if ( rx >= ( int )width ) rx = width;
-	if ( ry >= ( int )height ) ry = height;
+	if ( rx >= ( int )width ) rx = width - 1;
+	if ( ry >= ( int )height ) ry = height -1;
 
 	for ( int y = ly; y <= ry; y++ ) {
 		for ( int x = lx; x <= rx; x++ ) {
