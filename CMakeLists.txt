@@ -5,17 +5,17 @@ project (tpcommon CXX)
 set (tpcommon_VERSION_MAJOR 0)
 set (tpcommon_VERSION_MINOR 1)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++14 -DVER=${gcdapi_VERSION_MAJOR}.${gcdapi_VERSION_MINOR}")
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2")
-
-add_definitions(-std=c++11)
-add_definitions(-Wall)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 FIND_PACKAGE( OpenMP )
   if(OPENMP_FOUND)
@@ -33,9 +33,9 @@ include_directories("${PROJECT_SOURCE_DIR}/thirdparty/json")
 include_directories("${PROJECT_SOURCE_DIR}/thirdparty/fakeit")
 include_directories("${PROJECT_SOURCE_DIR}/thirdparty/lodepng")
 
-set(app_SOURCES "a_main.cpp" )
-file(GLOB_RECURSE lib_SOURCES "src/*.cpp")
-file(GLOB_RECURSE app_TESTS "tests/*.cpp")
+set(app_SOURCES "${PROJECT_SOURCE_DIR}/a_main.cpp" )
+file(GLOB_RECURSE lib_SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+file(GLOB_RECURSE app_TESTS "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
 add_library(tpcommon SHARED ${lib_SOURCES} "${PROJECT_SOURCE_DIR}/thirdparty/lodepng/lodepng.cpp")
 
