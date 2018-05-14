@@ -27,19 +27,20 @@ SOFTWARE.
 #ifndef __POSITION__HPP___
 #define  __POSITION__HPP___
 
-#include <vector>
+#include <array>
 //#include <tuple>
 #include <ostream>
 
 namespace tp {
 namespace coord {
 
-class Position : public std::vector < double > {
+class Position : public std::array < double,4 > {
 public:
 	Position();
 	Position( double x );
 	Position( double x, double y );
 	Position( double x, double y, double z );
+	Position( double x, double y, double z, double t );
 };
 
 Position operator+(const Position &a, const Position &b);
@@ -49,7 +50,7 @@ Position operator*(const Position &a, const double &b);
 Position operator/(const Position &a, const Position &b);
 Position operator/( const Position &a, const double &b );
 double len2(const Position &s);
-double len2(const Position &s, bool x, bool y, bool z);
+double len2(const Position &s, bool x, bool y, bool z, bool t = false);
 double dotProduct( const Position &u, const Position &v);
 	
 // Position crossProduct( const Position &u, const Position &v);
